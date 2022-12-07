@@ -2,16 +2,22 @@
 const canvas = document.querySelector('canvas')
 const CANVAS_WIDTH = 1024
 const CANVAS_HEIGHT = 576
-const STEP_SPEED = 10
+const STEP_SPEED = 8
 canvas.width = CANVAS_WIDTH
 canvas.height = CANVAS_HEIGHT
 const context = canvas.getContext('2d')
 
 // Get images
-const playerImg = new Image()
+const playerUpImg = new Image()
+const playerDownImg = new Image()
+const playerLeftImg = new Image()
+const playerRightImg = new Image()
 const backgroundImg = new Image()
 const foregroundImg = new Image()
-playerImg.src = './img/playerDown.png'
+playerUpImg.src = './img/playerUp.png'
+playerDownImg.src = './img/playerDown.png'
+playerLeftImg.src = './img/playerLeft.png'
+playerRightImg.src = './img/playerRight.png'
 backgroundImg.src = './img/pokemonMap.png'
 foregroundImg.src = './img/foregroundObjects.png'
 
@@ -56,7 +62,7 @@ const background = new Sprite({
 const foreground = new Sprite({
   image: foregroundImg,
   position: {
-    x: backgroundOffset.x - 5,
+    x: backgroundOffset.x - 4,
     y: backgroundOffset.y
   }
 })
@@ -64,10 +70,16 @@ const foreground = new Sprite({
 // Setup player image
 const player = new Sprite({
   frames: { max: 4 },
-  image: playerImg,
+  image: playerDownImg,
   position: {
     x: CANVAS_WIDTH / 2,
     y: CANVAS_HEIGHT / 2 - BLOCK / 2
+  },
+  sprites: {
+    up: playerUpImg,
+    down: playerDownImg,
+    left: playerLeftImg,
+    right: playerRightImg
   }
 })
 
@@ -108,7 +120,11 @@ const animate = () => {
   foreground.draw()
 
   let moving = true
+  player.moving = false
+
   if (keys.w.pressed && lastKeyPressed === 'w') {
+    player.moving = true
+    player.image = player.sprites.up
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
@@ -130,6 +146,8 @@ const animate = () => {
     if (moving) movables.forEach((item) => item.position.y += STEP_SPEED)
   }
   else if (keys.s.pressed && lastKeyPressed === 's') {
+    player.moving = true
+    player.image = player.sprites.down
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
@@ -151,6 +169,8 @@ const animate = () => {
     if (moving) movables.forEach((item) => item.position.y -= STEP_SPEED)
   }
   else if (keys.d.pressed && lastKeyPressed === 'd') {
+    player.moving = true
+    player.image = player.sprites.right
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
@@ -172,6 +192,8 @@ const animate = () => {
     if (moving) movables.forEach((item) => item.position.x -= STEP_SPEED)
   }
   else if (keys.a.pressed && lastKeyPressed === 'a') {
+    player.moving = true
+    player.image = player.sprites.left
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
       if (
