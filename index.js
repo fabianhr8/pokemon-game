@@ -49,6 +49,29 @@ collisionsMap.forEach((row, i) => {
   })
 })
 
+// Create and use battle zones map
+const battleZonesMap = []
+for (let i = 0; i < battleZonesData.length; i += 70) {
+  battleZonesMap.push(battleZonesData.slice(i, i + 70))
+}
+
+const battleZones = []
+
+battleZonesMap.forEach((row, i) => {
+  row.forEach((element, j) => {
+    if (element === 1025) {
+      battleZones.push(
+        new Boundary({
+          position: {
+            x: j * Boundary.height + backgroundOffset.x,
+            y: i * Boundary.width + backgroundOffset.y
+          }
+        })
+      )
+    }
+  })
+})
+
 // Setup background image
 const background = new Sprite({
   image: backgroundImg,
@@ -96,7 +119,8 @@ let lastKeyPressed = ''
 const movables = [
   background,
   foreground,
-  ...boundaries
+  ...boundaries,
+  ...battleZones
 ]
 
 // This tests collision between 2 elements
@@ -109,12 +133,20 @@ const rectangularCollision = ({ rectangle1, rectangle2 }) => {
   )
 }
 
+const battle = {
+  initiated: false
+}
+
 // Main animation
 const animate = () => {
-  window.requestAnimationFrame(animate)
+  const animationId = window.requestAnimationFrame(animate)
+  console.log(animationId)
   background.draw()
   boundaries.forEach((boundary) => {
     boundary.draw()
+  })
+  battleZones.forEach((battleZone) => {
+    battleZone.draw()
   })
   player.draw()
   foreground.draw()
@@ -122,6 +154,52 @@ const animate = () => {
   let moving = true
   player.moving = false
 
+  if (battle.initiated) return
+
+  // Activate battle
+  if (keys.w.pressed || keys.s.pressed || keys.d.pressed || keys.a.pressed) {
+    for (let i = 0; i < battleZones.length; i++) {
+      const battleZone = battleZones[i]
+      const overlappingArea =
+        (Math.min(player.position.x + player.width, battleZone.position.x + battleZone.width) -
+        Math.max(player.position.x, battleZone.position.x)) *
+        (Math.min(player.position.y + player.height, battleZone.position.y + battleZone.height) -
+        Math.max(player.position.y, battleZone.position.y))
+      if (
+        rectangularCollision({ rectangle1: player, rectangle2: battleZone }) &&
+        overlappingArea > (player.width * player.height) / 2 &&
+        Math.random() < 0.02
+      ) {
+        console.log('battle zone')
+        battle.initiated = true
+
+        // Cancel current animation loop
+        window.cancelAnimationFrame(animationId)
+
+        // Animation
+        gsap.to('#overlappingDiv', {
+          opacity: 1,
+          repeat: 3,
+          yoyo: true,
+          duration: 0.4,
+          onComplete() {
+            gsap.to('#overlappingDiv', {
+              opacity: 1,
+              duration: 0.4
+            })
+
+            // Activate new animation loop
+            animateBattle()
+
+          }
+        })
+
+        break
+      }
+    }
+  }
+
+// Check for collision with boundaries
   if (keys.w.pressed && lastKeyPressed === 'w') {
     player.moving = true
     player.image = player.sprites.up
@@ -217,6 +295,12 @@ const animate = () => {
 }
 
 animate()
+
+// Battle sequence animation
+const animateBattle = () => {
+  window.requestAnimationFrame(animateBattle)
+  console.log('animateBattle')
+}
 
 // Get pressed keys
 window.addEventListener('keydown', (e) => {

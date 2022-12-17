@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang='en' dir='ltr'>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <style>
       body {
         background-color: black
@@ -10,7 +10,20 @@
     <title>Pokemon</title>
   </head>
   <body>
-    <canvas></canvas>
+    <div style='display: inline-block; position: relative'>
+      <div
+        id='overlappingDiv'
+        style=' background-color: #000000; top: 0; bottom: 0; left: 0; right: 0; opacity: 0; position: absolute'
+      ></div>
+      <canvas></canvas>
+    </div>
+    <script
+      src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js'
+      integrity='sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=='
+      crossorigin='anonymous'
+      referrerpolicy='no-referrer'
+    ></script>
+    <script src='data/battleZonesData.js'></script>
     <script src='data/collisions.js'></script>
     <script src='classes.js'></script>
     <script src='index.js'></script>
