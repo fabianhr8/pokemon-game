@@ -8,6 +8,7 @@ canvas.height = CANVAS_HEIGHT
 const context = canvas.getContext('2d')
 
 // Get images
+// Movement
 const playerUpImg = new Image()
 const playerDownImg = new Image()
 const playerLeftImg = new Image()
@@ -20,6 +21,13 @@ playerLeftImg.src = './img/playerLeft.png'
 playerRightImg.src = './img/playerRight.png'
 backgroundImg.src = './img/pokemonMap.png'
 foregroundImg.src = './img/foregroundObjects.png'
+// Battle
+const battleBackgroundImg = new Image()
+const draggleImg = new Image()
+const embyImg = new Image()
+battleBackgroundImg.src = './img/battleBackground.png'
+draggleImg.src = './img/draggleSprite.png'
+embyImg.src = './img/embySprite.png'
 
 // Create and use collisions map
 const collisionsMap = []
@@ -92,7 +100,7 @@ const foreground = new Sprite({
 
 // Setup player image
 const player = new Sprite({
-  frames: { max: 4 },
+  frames: { max: 4, hold: 10 },
   image: playerDownImg,
   position: {
     x: CANVAS_WIDTH / 2,
@@ -103,6 +111,35 @@ const player = new Sprite({
     down: playerDownImg,
     left: playerLeftImg,
     right: playerRightImg
+  }
+})
+
+// Setup battle background image
+const battleBackground = new Sprite({
+  image: battleBackgroundImg,
+  position: {
+    x: 0,
+    y: 0
+  }
+})
+
+// Setup battle character images
+const draggle = new Sprite({
+  animate: true,
+  frames: { max: 4, hold: 30 },
+  image: draggleImg,
+  position: {
+    x: 800,
+    y: 100
+  }
+})
+const emby = new Sprite({
+  animate: true,
+  frames: { max: 4, hold: 30 },
+  image: embyImg,
+  position: {
+    x: 280,
+    y: 330
   }
 })
 
@@ -140,7 +177,6 @@ const battle = {
 // Main animation
 const animate = () => {
   const animationId = window.requestAnimationFrame(animate)
-  console.log(animationId)
   background.draw()
   boundaries.forEach((boundary) => {
     boundary.draw()
@@ -152,7 +188,7 @@ const animate = () => {
   foreground.draw()
 
   let moving = true
-  player.moving = false
+  player.animate = false
 
   if (battle.initiated) return
 
@@ -168,9 +204,9 @@ const animate = () => {
       if (
         rectangularCollision({ rectangle1: player, rectangle2: battleZone }) &&
         overlappingArea > (player.width * player.height) / 2 &&
-        Math.random() < 0.02
+        // Math.random() < 0.02
+        Math.random() < 0.5
       ) {
-        console.log('battle zone')
         battle.initiated = true
 
         // Cancel current animation loop
@@ -185,12 +221,16 @@ const animate = () => {
           onComplete() {
             gsap.to('#overlappingDiv', {
               opacity: 1,
-              duration: 0.4
+              duration: 0.4,
+              onComplete() {
+                // Activate new animation loop
+                animateBattle()
+                gsap.to('#overlappingDiv', {
+                  opacity: 0,
+                  duration: 0.4
+                })
+              }
             })
-
-            // Activate new animation loop
-            animateBattle()
-
           }
         })
 
@@ -201,7 +241,7 @@ const animate = () => {
 
 // Check for collision with boundaries
   if (keys.w.pressed && lastKeyPressed === 'w') {
-    player.moving = true
+    player.animate = true
     player.image = player.sprites.up
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
@@ -224,7 +264,7 @@ const animate = () => {
     if (moving) movables.forEach((item) => item.position.y += STEP_SPEED)
   }
   else if (keys.s.pressed && lastKeyPressed === 's') {
-    player.moving = true
+    player.animate = true
     player.image = player.sprites.down
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
@@ -247,7 +287,7 @@ const animate = () => {
     if (moving) movables.forEach((item) => item.position.y -= STEP_SPEED)
   }
   else if (keys.d.pressed && lastKeyPressed === 'd') {
-    player.moving = true
+    player.animate = true
     player.image = player.sprites.right
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
@@ -270,7 +310,7 @@ const animate = () => {
     if (moving) movables.forEach((item) => item.position.x -= STEP_SPEED)
   }
   else if (keys.a.pressed && lastKeyPressed === 'a') {
-    player.moving = true
+    player.animate = true
     player.image = player.sprites.left
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i]
@@ -299,8 +339,12 @@ animate()
 // Battle sequence animation
 const animateBattle = () => {
   window.requestAnimationFrame(animateBattle)
-  console.log('animateBattle')
+  battleBackground.draw()
+  draggle.draw()
+  emby.draw()
 }
+
+// animateBattle()
 
 // Get pressed keys
 window.addEventListener('keydown', (e) => {
