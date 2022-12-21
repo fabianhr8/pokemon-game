@@ -334,7 +334,7 @@ const animate = () => {
   }
 }
 
-animate()
+// animate()
 
 // Battle sequence animation
 const animateBattle = () => {
@@ -344,7 +344,7 @@ const animateBattle = () => {
   emby.draw()
 }
 
-// animateBattle()
+animateBattle()
 
 // Get pressed keys
 window.addEventListener('keydown', (e) => {
