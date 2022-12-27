@@ -6,6 +6,7 @@ class Sprite {
     animate = false,
     frames = { max: 1, hold: 10 },
     image,
+    isEnemy = false,
     position,
     sprites = {}
   }) {
@@ -19,9 +20,14 @@ class Sprite {
     }
     this.animate = animate
     this.sprites = sprites
+    this.opacity = 1
+    this.health = 100
+    this.isEnemy = isEnemy
   }
 
   draw() {
+    context.save()          // Everething between this and restore() is used only here, not globally
+    context.globalAlpha = this.opacity
     context.drawImage(
       this.image,
       // crop position, with and height
@@ -35,6 +41,7 @@ class Sprite {
       this.image.width / this.frames.max,
       this.image.height
     )
+    context.restore()
 
     // this will only happen for player img
     if (!this.animate && this.frames.max > 1) return
@@ -43,6 +50,48 @@ class Sprite {
       if (this.frames.val < this.frames.max - 1) this.frames.val++
       else this.frames.val = 0
     }
+  }
+
+  attack({ attack, recipient }) {
+    const timeline = gsap.timeline()
+
+    this.health -= attack.damage
+
+    let movementDistance = 20
+    let healthBar = '#enemyHealthBar'
+    if (this.isEnemy) {
+      movementDistance *= -1
+      healthBar = '#playerHealthBar'
+    }
+
+    timeline.to(this.position, {
+      x: this.position.x - movementDistance
+    }).to(this.position, {
+      x: this.position.x + movementDistance,
+      duration: 0.1,
+      onComplete: () => {
+        // Here's where enemy actually gets hit
+        gsap.to(healthBar, {
+          width: this.health + '%'
+        })
+
+        gsap.to(recipient.position, {
+          x: recipient.position.x + 10,
+          yoyo: true,
+          repeat: 5,
+          duration: 0.1
+        })
+
+        gsap.to(recipient, {
+          opacity: 0,
+          repeat: 5,
+          yoyo: true,
+          duration: 0.1
+        })
+      }
+    }).to(this.position, {
+      x: this.position.x
+    })
   }
 }
 

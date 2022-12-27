@@ -128,11 +128,13 @@ const draggle = new Sprite({
   animate: true,
   frames: { max: 4, hold: 30 },
   image: draggleImg,
+  isEnemy: true,
   position: {
     x: 800,
     y: 100
   }
 })
+
 const emby = new Sprite({
   animate: true,
   frames: { max: 4, hold: 30 },
@@ -345,6 +347,20 @@ const animateBattle = () => {
 }
 
 animateBattle()
+
+// Get response from clicked attacks
+document.querySelectorAll('button').forEach((button) => {
+  button.addEventListener('click', () => {
+    emby.attack({
+      attack: {
+        name: 'Tackle',
+        damage: 10,
+        type: 'Normal'
+      },
+      recipient: draggle
+    })
+  })
+})
 
 // Get pressed keys
 window.addEventListener('keydown', (e) => {
