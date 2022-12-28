@@ -168,13 +168,17 @@ const animate = () => {
       if (
         rectangularCollision({ rectangle1: player, rectangle2: battleZone }) &&
         overlappingArea > (player.width * player.height) / 2 &&
-        // Math.random() < 0.02
-        Math.random() < 0.5
+        Math.random() < 0.02
       ) {
         battle.initiated = true
 
         // Cancel current animation loop
         window.cancelAnimationFrame(animationId)
+
+        // Play battle initiated music
+        audio.map.stop()
+        audio.initBattle.play()
+        audio.battle.play()
 
         // Animation
         gsap.to('#overlappingDiv', {
@@ -299,7 +303,7 @@ const animate = () => {
   }
 }
 
-// animate()
+animate()
 
 // Get pressed keys
 window.addEventListener('keydown', (e) => {
@@ -311,4 +315,12 @@ window.addEventListener('keydown', (e) => {
 
 window.addEventListener('keyup', (e) => {
   if (e.key === 'w' || e.key === 's' || e.key === 'd' || e.key === 'a') keys[e.key].pressed = false
+})
+
+let clicked = false
+addEventListener('click', () => {
+  if (!clicked) {
+    audio.map.play()
+    clicked = true
+  }
 })

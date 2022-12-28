@@ -67,6 +67,7 @@ const initBattle = () => {
                 opacity: 0
               })
               battle.initiated = false
+              audio.map.play()
               animate()
             }
           })
@@ -102,6 +103,8 @@ const initBattle = () => {
                 opacity: 0
               })
               battle.initiated = false
+              audio.victory.stop()
+              audio.map.play()
               animate()
             }
           })
@@ -124,9 +127,6 @@ const animateBattle = () => {
   battleAnimationId = window.requestAnimationFrame(animateBattle)
   renderedSprites.forEach((sprite) => sprite.draw())
 }
-
-initBattle()
-animateBattle()
 
 // Event listener on dialog box
 document.querySelector('#dialogBox').addEventListener('click', (e) => {
