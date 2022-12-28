@@ -17,7 +17,7 @@ const monsters = {
   },
   Draggle: {
     animate: true,
-    attacks: [attacks.Tackle],
+    attacks: [attacks.Tackle, attacks.Fireball],
     frames: { max: 4, hold: 30 },
     image: draggleImg,
     isEnemy: true,
