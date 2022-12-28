@@ -11,13 +11,15 @@ class Sprite {
     sprites = {}
   }) {
     this.frames = { ...frames, val: 0, elapsed: 0 }
-    this.image = image
+    this.image = new Image()
     this.position = position
 
     this.image.onload = () => {
         this.height = this.image.height
         this.width = this.image.width / this.frames.max
     }
+
+    this.image.src = image.src
     this.animate = animate
     this.sprites = sprites
     this.opacity = 1
@@ -95,7 +97,7 @@ class Monster extends Sprite {
     document.querySelector('#dialogBox').style.display = 'block'
     document.querySelector('#dialogBox').innerHTML = `${this.name} used ${attack.name}`
 
-    this.health -= attack.damage
+    recipient.health -= attack.damage
     let healthBar = '#enemyHealthBar'
     let rotation = 1
     if (this.isEnemy) {
@@ -125,7 +127,7 @@ class Monster extends Sprite {
           onComplete: () => {
             // Here's where enemy actually gets hit
             gsap.to(healthBar, {
-              width: this.health + '%'
+              width: recipient.health + '%'
             })
 
             gsap.to(recipient.position, {
@@ -159,7 +161,7 @@ class Monster extends Sprite {
           onComplete: () => {
             // Here's where enemy actually gets hit
             gsap.to(healthBar, {
-              width: this.health + '%'
+              width: recipient.health + '%'
             })
 
             gsap.to(recipient.position, {
@@ -181,6 +183,21 @@ class Monster extends Sprite {
         })
       break
     }
+  }
+
+  faint() {
+    // Display "fainted" message
+    document.querySelector('#dialogBox').innerHTML = `${this.name} fainted!`
+    gsap.to(this.position, {
+      y: this.position.y + 20
+    })
+    gsap.to(this, {
+      opacity: 0
+    })
+    gsap.to(this.position, {
+      x: this.position.x,
+      y: this.position.y
+    })
   }
 }
 
