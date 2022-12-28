@@ -7,6 +7,7 @@ class Sprite {
     frames = { max: 1, hold: 10 },
     image,
     isEnemy = false,
+    name,
     position,
     rotation = 0,
     sprites = {}
@@ -25,6 +26,7 @@ class Sprite {
     this.health = 100
     this.isEnemy = isEnemy
     this.rotation = rotation
+    this.name = name
   }
 
   draw() {
@@ -66,6 +68,10 @@ class Sprite {
   }
 
   attack({ attack, recipient, renderedSprites }) {
+    // Display text in dialog box
+    document.querySelector('#dialogBox').style.display = 'block'
+    document.querySelector('#dialogBox').innerHTML = `${this.name} used ${attack.name}`
+
     this.health -= attack.damage
     let healthBar = '#enemyHealthBar'
     let rotation = 1

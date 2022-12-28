@@ -21,13 +21,6 @@ playerLeftImg.src = './img/playerLeft.png'
 playerRightImg.src = './img/playerRight.png'
 backgroundImg.src = './img/pokemonMap.png'
 foregroundImg.src = './img/foregroundObjects.png'
-// Battle
-const battleBackgroundImg = new Image()
-const draggleImg = new Image()
-const embyImg = new Image()
-battleBackgroundImg.src = './img/battleBackground.png'
-draggleImg.src = './img/draggleSprite.png'
-embyImg.src = './img/embySprite.png'
 
 // Create and use collisions map
 const collisionsMap = []
@@ -111,37 +104,6 @@ const player = new Sprite({
     down: playerDownImg,
     left: playerLeftImg,
     right: playerRightImg
-  }
-})
-
-// Setup battle background image
-const battleBackground = new Sprite({
-  image: battleBackgroundImg,
-  position: {
-    x: 0,
-    y: 0
-  }
-})
-
-// Setup battle character images
-const draggle = new Sprite({
-  animate: true,
-  frames: { max: 4, hold: 30 },
-  image: draggleImg,
-  isEnemy: true,
-  position: {
-    x: 800,
-    y: 100
-  }
-})
-
-const emby = new Sprite({
-  animate: true,
-  frames: { max: 4, hold: 30 },
-  image: embyImg,
-  position: {
-    x: 280,
-    y: 330
   }
 })
 
@@ -337,32 +299,6 @@ const animate = () => {
 }
 
 // animate()
-
-const renderedSprites = [
-  battleBackground,
-  draggle,
-  emby
-]
-
-// Battle sequence animation
-const animateBattle = () => {
-  window.requestAnimationFrame(animateBattle)
-  renderedSprites.forEach((sprite) => sprite.draw())
-}
-
-animateBattle()
-
-// Event listeners for attacks
-document.querySelectorAll('button').forEach((button) => {
-  button.addEventListener('click', (e) => {
-    const selectedAttack = e.target.innerHTML
-    emby.attack({
-      attack: attacks[selectedAttack],
-      recipient: draggle,
-      renderedSprites
-    })
-  })
-})
 
 // Get pressed keys
 window.addEventListener('keydown', (e) => {

@@ -25,6 +25,7 @@
     </style>
     <title>Pokemon</title>
   </head>
+
   <body>
     <div style="display: inline-block; position: relative">
       <div
@@ -96,6 +97,7 @@
         </div>
       </div>
       <canvas></canvas>
+      <!-- Attack bar -->
       <div
         id="attackBar"
         style="
@@ -109,6 +111,20 @@
         position: absolute
       "
       >
+        <div
+          id="dialogBox"
+          style="
+            padding: 12px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            cursor: pointer;
+            display: none;
+            left: 0;
+            right: 0;
+            background-color: white;
+          "
+        ></div>
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); width: 66.67%">
           <button>Tackle</button>
           <button>Fireball</button>
@@ -126,6 +142,7 @@
         </div>
       </div>
     </div>
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
       integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
@@ -137,5 +154,6 @@
     <script src="data/attacks.js"></script>
     <script src="classes.js"></script>
     <script src="index.js"></script>
+    <script src="battleScene.js"></script>
   </body>
 </html>
