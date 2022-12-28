@@ -6,8 +6,6 @@ class Sprite {
     animate = false,
     frames = { max: 1, hold: 10 },
     image,
-    isEnemy = false,
-    name,
     position,
     rotation = 0,
     sprites = {}
@@ -23,10 +21,7 @@ class Sprite {
     this.animate = animate
     this.sprites = sprites
     this.opacity = 1
-    this.health = 100
-    this.isEnemy = isEnemy
     this.rotation = rotation
-    this.name = name
   }
 
   draw() {
@@ -65,6 +60,34 @@ class Sprite {
       if (this.frames.val < this.frames.max - 1) this.frames.val++
       else this.frames.val = 0
     }
+  }
+}
+
+// Create a monster
+class Monster extends Sprite {
+  constructor({
+    animate = false,
+    attacks,
+    frames = { max: 1, hold: 10 },
+    image,
+    isEnemy = false,
+    name,
+    position,
+    rotation = 0,
+    sprites = {}
+  }) {
+    super({
+      animate,
+      frames,
+      image,
+      position,
+      rotation,
+      sprites
+    })
+    this.attacks = attacks
+    this.health = 100
+    this.isEnemy = isEnemy
+    this.name = name
   }
 
   attack({ attack, recipient, renderedSprites }) {

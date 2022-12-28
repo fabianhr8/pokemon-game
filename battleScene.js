@@ -1,10 +1,6 @@
-// Battle
+// Background img
 const battleBackgroundImg = new Image()
-const draggleImg = new Image()
-const embyImg = new Image()
 battleBackgroundImg.src = './img/battleBackground.png'
-draggleImg.src = './img/draggleSprite.png'
-embyImg.src = './img/embySprite.png'
 
 // Setup battle background image
 const battleBackground = new Sprite({
@@ -16,34 +12,21 @@ const battleBackground = new Sprite({
 })
 
 // Setup battle character images
-const draggle = new Sprite({
-  animate: true,
-  frames: { max: 4, hold: 30 },
-  image: draggleImg,
-  isEnemy: true,
-  name: 'Draggle',
-  position: {
-    x: 800,
-    y: 100
-  }
-})
-
-const emby = new Sprite({
-  animate: true,
-  frames: { max: 4, hold: 30 },
-  image: embyImg,
-  name: 'Emby',
-  position: {
-    x: 280,
-    y: 330
-  }
-})
+const draggle = new Monster(monsters.Draggle)
+const emby = new Monster(monsters.Emby)
 
 const renderedSprites = [
   battleBackground,
   draggle,
   emby
 ]
+
+// Populate attack box with character attacks
+emby.attacks.forEach((attack) => {
+  const button = document.createElement('button')
+  button.innerHTML = attack.name
+  document.querySelector('#attacksBox').append(button)
+})
 
 // Battle sequence animation
 const animateBattle = () => {
