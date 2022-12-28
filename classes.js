@@ -8,6 +8,7 @@ class Sprite {
     image,
     isEnemy = false,
     position,
+    rotation = 0,
     sprites = {}
   }) {
     this.frames = { ...frames, val: 0, elapsed: 0 }
@@ -23,10 +24,22 @@ class Sprite {
     this.opacity = 1
     this.health = 100
     this.isEnemy = isEnemy
+    this.rotation = rotation
   }
 
   draw() {
     context.save()          // Everething between this and restore() is used only here, not globally
+    // This will move point to center of img and rotate it
+    context.translate(
+      this.position.x + this.width / 2,
+      this.position.y + this.height / 2
+    )
+    context.rotate(this.rotation)
+    context.translate(
+      -this.position.x - this.width / 2,
+      -this.position.y - this.height / 2
+    )
+
     context.globalAlpha = this.opacity
     context.drawImage(
       this.image,
@@ -52,46 +65,93 @@ class Sprite {
     }
   }
 
-  attack({ attack, recipient }) {
-    const timeline = gsap.timeline()
-
+  attack({ attack, recipient, renderedSprites }) {
     this.health -= attack.damage
-
-    let movementDistance = 20
     let healthBar = '#enemyHealthBar'
+    let rotation = 1
     if (this.isEnemy) {
-      movementDistance *= -1
       healthBar = '#playerHealthBar'
+      rotation = -2.2
     }
 
-    timeline.to(this.position, {
-      x: this.position.x - movementDistance
-    }).to(this.position, {
-      x: this.position.x + movementDistance,
-      duration: 0.1,
-      onComplete: () => {
-        // Here's where enemy actually gets hit
-        gsap.to(healthBar, {
-          width: this.health + '%'
+    switch(attack.name) {
+      case 'Fireball':
+        const fireballImg = new Image()
+        fireballImg.src = './img/fireball.png'
+        const fireball = new Sprite({
+          animate: true,
+          frames: { max: 4, hold: 10 },
+          image: fireballImg,
+          position: {
+            x: this.position.x,
+            y: this.position.y
+          },
+          rotation
         })
+        renderedSprites.splice(2, 0, fireball)
 
-        gsap.to(recipient.position, {
-          x: recipient.position.x + 10,
-          yoyo: true,
-          repeat: 5,
-          duration: 0.1
-        })
+        gsap.to(fireball.position, {
+          x: recipient.position.x,
+          y: recipient.position.y,
+          onComplete: () => {
+            // Here's where enemy actually gets hit
+            gsap.to(healthBar, {
+              width: this.health + '%'
+            })
 
-        gsap.to(recipient, {
-          opacity: 0,
-          repeat: 5,
-          yoyo: true,
-          duration: 0.1
+            gsap.to(recipient.position, {
+              x: recipient.position.x + 10,
+              yoyo: true,
+              repeat: 5,
+              duration: 0.1
+            })
+
+            gsap.to(recipient, {
+              opacity: 0,
+              repeat: 5,
+              yoyo: true,
+              duration: 0.1
+            })
+            renderedSprites.splice(2, 1)
+          }
         })
-      }
-    }).to(this.position, {
-      x: this.position.x
-    })
+      break
+
+      case 'Tackle':
+        const timeline = gsap.timeline()
+        let movementDistance = 20
+        if (this.isEnemy) movementDistance *= -1
+
+        timeline.to(this.position, {
+          x: this.position.x - movementDistance
+        }).to(this.position, {
+          x: this.position.x + movementDistance,
+          duration: 0.1,
+          onComplete: () => {
+            // Here's where enemy actually gets hit
+            gsap.to(healthBar, {
+              width: this.health + '%'
+            })
+
+            gsap.to(recipient.position, {
+              x: recipient.position.x + 10,
+              yoyo: true,
+              repeat: 5,
+              duration: 0.1
+            })
+
+            gsap.to(recipient, {
+              opacity: 0,
+              repeat: 5,
+              yoyo: true,
+              duration: 0.1
+            })
+          }
+        }).to(this.position, {
+          x: this.position.x
+        })
+      break
+    }
   }
 }
 

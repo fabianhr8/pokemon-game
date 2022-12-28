@@ -338,26 +338,28 @@ const animate = () => {
 
 // animate()
 
+const renderedSprites = [
+  battleBackground,
+  draggle,
+  emby
+]
+
 // Battle sequence animation
 const animateBattle = () => {
   window.requestAnimationFrame(animateBattle)
-  battleBackground.draw()
-  draggle.draw()
-  emby.draw()
+  renderedSprites.forEach((sprite) => sprite.draw())
 }
 
 animateBattle()
 
-// Get response from clicked attacks
+// Event listeners for attacks
 document.querySelectorAll('button').forEach((button) => {
-  button.addEventListener('click', () => {
+  button.addEventListener('click', (e) => {
+    const selectedAttack = e.target.innerHTML
     emby.attack({
-      attack: {
-        name: 'Tackle',
-        damage: 10,
-        type: 'Normal'
-      },
-      recipient: draggle
+      attack: attacks[selectedAttack],
+      recipient: draggle,
+      renderedSprites
     })
   })
 })
