@@ -1,0 +1,4 @@
+const CANVAS_WIDTH = 1024
+const CANVAS_HEIGHT = 576
+const STEP_SPEED = 8
+const BLOCK = 48
